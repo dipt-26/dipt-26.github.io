@@ -140,7 +140,7 @@
   <div class="container is-max-desktop">
     <div class="hero-body">
       <video id="spotlight" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/Case02.mp4"
+        <source src="./static/videos/DIPT_test1.MOV"
                 type="video/mp4">
       </video>
     </div>
@@ -148,13 +148,13 @@
 </section>
 
 
-<section class="hero is-small">
+<!-- <section class="hero is-small">
   <div class="hero-body">
     <div class="container">
       <div id="results-carousel" class="carousel results-carousel">
         <div class="item item-steve">
           <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/Case04.mp4"
+            <source src="./static/videos/Ca"
                     >
           </video>
         </div>
@@ -186,10 +186,10 @@
       </div>
     </div>
         <h3 class="title is-3" style="background-position: center;margin-left: 30rem;">
-          <span class="dovsg" style="background-position: center;"> Comparative runs of our pipeline for different test cases</span>
+          <span class="dovsg" style="background-position: center;">Comparative runs of our pipeline for different test cases</span>
         </h3>
   </div>
-</section>
+</section> -->
 
 
 <section class="section"  style="background: #f5f5f5 !important;">
@@ -200,17 +200,28 @@
         <h2 class="title is-3" style="background: #f5f5f5 !important;">Abstract</h2>
         <div class="content has-text-justified">
 
-          <p>
-            Retrieving a target object from dense tabletop clutter is a challenging long-horizon manipulation problem due to tight packing, complex contact dynamics, and the combinatorial explosion of possible push sequences. Traditional planning-based systems rely on parallelized Monte Carlo Tree Search (MCTS), but suffer from heavy computational overhead, often requiring 25–30 seconds per action.
-          </p>
+        <p>
+        This project presents a learning-based dynamics model for robotic push manipulation in cluttered environments, aimed at enabling a robot to plan contact-based actions for retrieving multiple stationary objects. Traditional push-prediction architectures rely on separate MLP modules for encoding object states, modeling interactions, and predicting displacements, which limits generalization and restricts interaction reasoning.
+        </p>
 
-          <p>
-            We present a fast and reactive reinforcement learning alternative based on <b>Proximal Policy Optimization (PPO)</b>. Our agent learns 16 discrete, quasi-static planar push primitives and uses a carefully designed reward scheme to efficiently create graspable clearances in cluttered scenes—achieving real-time decision making without expensive tree search.
-          </p>
 
-          <p>
-            Despite being trained from scratch, the learned policy generalizes strongly, retrieving targets in heavily packed environments with <b>≈92% success</b> and handling up to <b>11 objects</b>. The full retrieval process completes within <b>~20 seconds per scene</b>, offering a >10× speedup over state-of-the-art MCTS-based approaches while maintaining comparable or superior performance.
-          </p>
+        <p>
+        To address these limitations, the researcher developed a <strong>Transformer-based architecture</strong> that represents each object as a token embedding and leverages <strong>multi-head self-attention</strong> to capture object–object and robot–object interactions. This unified formulation naturally supports a <strong>variable number of objects</strong>, models long-range dependencies, and substantially improves predictive accuracy.
+        </p>
+
+
+        <p>
+        Integrated with a PyBullet simulation pipeline, the model was trained on thousands of pushing scenarios and evaluated on both single-object and cluttered scenes. The Transformer-based approach delivered a <strong>40% improvement in displacement prediction accuracy</strong> over MLP baselines. The learned dynamics model was further integrated with <strong>Monte Carlo Tree Search (MCTS)</strong> and <strong>reinforcement learning</strong> (DQN) to generate effective push policies for multi-object retrieval tasks.
+        </p>
+
+
+        <p>
+        Overall, the project demonstrates how attention-based architectures can significantly enhance physical interaction modeling and enable more reliable planning for contact-rich robotic manipulation.
+        </p>
+
+
+
+
 
         </div>
       </div>
@@ -241,22 +252,41 @@
 
         <!-- Interpolating. -->
         <h3 class="title is-4">Our Pipeline</h3>
-        <img src="./static/images/CPRL_Pipeline.png" class="interpolation-image" alt="CPRL Pipeline">
+        <!-- <img src="./static/images/CPRL_Pipeline.png" class="interpolation-image" alt="CPRL Pipeline"> -->
         <div class="content has-text-justified">
-         <p>
-            Our continuous non-prehensile manipulation pipeline (<span style="color:#E04E4E;"><b>CPRL</b></span>) integrates 
-            perception, control, and grasp prediction into a real-time framework for retrieving a target object from dense clutter. 
-            A dual-camera eye-on-hand setup provides uninterrupted 3D pose estimates 
-            (<span style="color:#E04E4E;"><b>centers + in-plane rotations</b></span>) of all objects, even during pushing. These observations feed 
-            into a PPO-based control module, where the RL policy selects one of 
-            <span style="color:#E04E4E;"><b>16 push primitives</b></span> to gradually create graspable clearance around the target. 
-            The policy operates in simulation using object bounding boxes and gripper state, optimized with a structured reward 
-            encouraging reduced clutter overlap and improved target isolation. Once the scene becomes graspable, our accelerated 
-            grasp network computes the final top-down grasp configuration 
-            <span style="color:#E04E4E;"><b>(X, Y, θ)</b></span> using GPU-batched inference for a <b>10× speedup</b>. 
-            Together, these components enable continuous pushing, real-time perception, and fast grasp execution without any 
-            stop–sense–plan delays.
-          </p>
+        <p>
+        The proposed manipulation pipeline integrates simulation, learned dynamics, 
+        and planning into a unified framework for multi-object push-based retrieval. 
+        A PyBullet environment provides continuous object states, which are encoded 
+        into token embeddings and processed by a 
+        <span style="color:#E04E4E;"><b>Transformer-based dynamics model</b></span> 
+        capable of predicting object–object and robot–object interactions under 
+        candidate push actions. These predictions are used by a high-level planner—
+        either <span style="color:#E04E4E;"><b>MCTS</b></span> or a 
+        <span style="color:#E04E4E;"><b>reinforcement learning policy</b></span>—to 
+        efficiently evaluate long-horizon push sequences without repeatedly invoking 
+        costly physics simulation.
+        </p>
+
+        <p>
+        The planner operates on compact representations of object positions and 
+        clutter configuration, leveraging the learned dynamics to choose actions that 
+        progressively isolate the target object. This approach enables fast and 
+        robust reasoning over 
+        <span style="color:#E04E4E;"><b>variable numbers of objects</b></span>, 
+        capturing complex multi-body interactions through self-attention. Once a 
+        promising push is selected, it is executed in simulation or on real hardware, 
+        enabling smooth, continuous manipulation without stop–sense–plan cycles.
+        </p>
+
+        <p>
+        Together, these components form a reactive closed-loop framework for 
+        retrieval in dense clutter, offering a substantial improvement over MLP-based 
+        models and achieving a <span style="color:#E04E4E;"><b>40% gain in displacement 
+        prediction accuracy</b></span>. The resulting system delivers fast, scalable, 
+        and generalizable pushing behaviors that support efficient multi-object 
+        retrieval in challenging environments.
+        </p>
         </div>
         
         <!-- <div class="columns is-vcentered interpolation-panel">
@@ -316,10 +346,10 @@
   <div class="container is-max-desktop">
 
     <!-- Architecture. -->
-    <div class="columns is-centered">
+    <!-- <div class="columns is-centered">
       <div class="column is-full-width">
         <h2 class="title is-3">
-          Results
+          Results -->
 
         <!-- Re-rendering. -->
         <!-- <h3 class="title is-4">Re-rendering the input video</h3>
@@ -348,10 +378,10 @@
 </div>
 </section>
 
-<section class="section">
+<!-- <section class="section">
   <div class="container is-max-desktop">
 
-    <!-- Architecture. -->
+     Architecture. 
     <div class="columns is-centered">
       <div class="column is-full-width">
         <h2 class="title is-3">
@@ -360,7 +390,7 @@
           </div>
           </div>
           </div>
-          </section>
+          </section> -->
 
 <!-- <section class="hero teaser">
   <div class="container is-max-desktop">
